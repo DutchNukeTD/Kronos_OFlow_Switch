@@ -1,0 +1,56 @@
+#! C:/Program Files/Nuke14.0v2/nuke-14.0.2.dll -nx
+version 14.0 v2
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="1" w="2558" h="1377" screen="0">
+        <splitter orientation="1">
+            <split size="1619"/>
+            <splitter orientation="1">
+                <split size="1619"/>
+                <dock id="" activePageId="uk.co.thefoundry.scripteditor.2">
+                    <page id="uk.co.thefoundry.scripteditor.2"/>
+                </dock>
+            </splitter>
+            <split size="935"/>
+            <splitter orientation="2">
+                <split size="666"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="664"/>
+                <dock id="" hideTitles="1" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                </dock>
+            </splitter>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name "C:/Users/The Compound PC 10/.nuke/nodeCopys/oflow.nk"
+ fps 25
+ format "1920 1080 0 0 1920 1080 1 HD_1080"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ OCIO_config custom
+ customOCIOConfigPath "C:/Program Files/Nuke13.2v1/plugins/OCIOConfigs/configs/aces_1.2/config.ocio"
+ workingSpaceLUT linear
+ monitorLut sRGB
+ monitorOutLUT rec709
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+OFlow2 {
+ inputs 0
+ name OFlow1
+ note_font Verdana
+ selected true
+ xpos -199
+ ypos -1041
+ addUserKnob {20 User}
+ addUserKnob {22 switchNode l "Switch To Kronos" -STARTLINE T "def switchNode():\n\n    kronos = nuke.nodePaste(r'C:/Users/The Compound PC 10/.nuke/nodeCopys/kronos.nk')\n    # Set Kronos input to OFlows input\n    oflow = nuke.thisNode()\n    nodeInput = oflow.dependencies()\n    # Node that has oflow as input. \n    try:\n        nodeOut = oflow.dependent()\n    except IndexError:\n        pass \n    # Checks if this node has a input else ignore set input. \n    if len(nodeInput) > 0:     \n        nodeInput = nodeInput\[0]\n        kronos.setInput(0, nodeInput)\n    \n    ignoreKnobs = \['name']\n    \n    for knob in nuke.thisNode().knobs():\n        for ignore in ignoreKnobs:\n            if knob == ignore:\n                pass\n            else:\n                try:\n                    knobName = str(knob)\n                    value = nuke.thisNode()\[knobName].toScript()\n                    kronos\[knobName].fromScript(value)\n                except:\n                    pass\n    \n    # To be sure, unselected all nodes. \n    allNodes = nuke.allNodes()\n    for node in allNodes:\n        node.setSelected(False)\n    # Set node to selected to delete node. \n    oflow.setSelected(True)\n    nukescripts.node_delete(popupOnError=True)\n    # Open new node \"Kronos\" panel.\n    kronos.setSelected(True)\n    kronos.showControlPanel(False)\n    # if there is a nodeOut\n    # Set kronos as input to nodeOut. \n    try:\n        nodeOut.setInput(0, kronos)\n    except:\n        pass\n    \nswitchNode()\n"}
+}
